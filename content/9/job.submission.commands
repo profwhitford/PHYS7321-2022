@@ -1,0 +1,139 @@
+Log on to the discovery cluster
+-Linux/Mac
+>ssh <username>@login.discovery.neu.edu
+-Windows
+Use PuTTY or other SSH shell software
+
+It is probably worth immediately making sure you are on the scratch disk, and not home.
+
+>cd /scratch/<username>
+
+start an interactive session
+
+>srun -N 1  -n 1 -c 1  -t 00:10:00 --pty /bin/bash
+
+This example asks for 1 node, with 1 thread and 1 CPU per thread, for 10 minutes.
+If you go past 10 minutes, you will be kicked off
+
+If you find yourself waiting for a while, you can ask for the "express" partition.  This is a separate "line", or "queue", for very short requests
+
+>srun -p express -N 1  -n 1 -c 1  -t 00:10:00 --pty /bin/bash
+
+From within your interactive session (i.e. after srun says "...allocated resources"), you can run commands.
+
+If you want a specific version of python, we will need to load a module.  let's load 3.8.1
+ 
+>module load python/3.8.1
+
+It's always a good idea to check that things loaded properly.
+
+>which python
+
+This should show path that looks like:
+/shared/centos7/python/3.8.1/bin/python
+
+
+Now, we are ready to start python:
+
+>python
+
+This will open a python session, and you can begin to program.  For example, you could copy your jupyter routines into the session.  You will see that it is not very practical.
+
+Let's exit python (Ctrl+D)
+
+
+Now, let's run a script from the command line:
+python myfirstscript.py 0.1
+
+It may give you an import error due to a missing module
+So...
+
+Aside on conda:
+We often import modules in python, but this assumes they are available to your account.  If you are using a shared machine, it is not practical that the admins will make every module globally available.  For this, there is the conda environment.
+
+First, install conda.  Follow steps at:
+https://rc-docs.northeastern.edu/en/latest/software/conda.html#working-with-a-miniconda-environment
+
+Next, create a new environment (make a workspace)
+
+>conda create --name PHYS7321
+
+Now, let's activate it (enter the workspace)
+>conda activate PHYS7321
+
+Now, we need to personalize our workspace. One way is to install module within our workspace/environment.
+>conda install -c conda-forge numpy
+
+Ok, back to the task at hand.
+Let's repeat our calculation, but require a more precise answer.
+
+python myfirstscript.py 0.001
+python myfirstscript.py 0.0001
+python myfirstscript.py 0.00001
+
+At some point, you will see that you are waiting a very long time.  If you lose your connection, you lose your job! 
+
+So, let's submit jobs to the queue.
+
+First, let's get out of our interactive session.
+> exit
+
+Note: this does not log us off of the machine.  It only logs us off of the compute node.
+
+Let's write a "submit script".  A submit script is a file that has two components:
+- a list of required resources
+- a list of commands to run, once you are allocated resources.
+
+------------------ SUBMIT SCRIPT DESCRIPTION---------------------
+First, you need to list your requested resources.  That is, what 
+hardware do you want to use, and for how long?  This is accomplished
+using #SBATCH tags on each line.  After all #SBATCH lines, you have to give the commands you want to run.
+
+Example:
+*********************************************************
+
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -c 1
+#SBATCH --time=1:00:00
+#SBATCH -J MyFirstJob 
+#SBATCH --mem 10Gb
+
+conda activate PHYS7321
+module load python/3.8.1
+python firstpythonscript.py 0.00000001
+
+
+*********************************************************
+
+This header would ask for 1 node, 1 thread and 1 core for 1 hour.  Also, it would ensure you have 10Gb of memory available.  If you exceed the memory limit, your job will be "killed".  Also, if your commands don't complete within the requested time window, the job will be killed. So, make sure to ask for enough.  But, don't ask for too much memory, or you will hold resources that are unused. Once you are given these resources, the commands will be run on the node
+
+
+Ok, so how do we submit our job?
+
+If the script file is called jobscript:
+> sbatch jobscript
+
+If it works, then you should see a number printed to screen (i.e. JOB ID)
+
+Let's see where we are in the queue:
+>squeue
+
+This will show all jobs that are running and waiting... may be hard to find your job.
+
+Try:
+>squeue -j <your job ID>
+
+But, what if you forgot your jobs ID?  just list all of your jobs.
+>squeue -u <your user name>
+
+If everything worked, you will see your job sitting there, maybe running.
+
+What if you submit the wrong script?  Then cancel the job.
+>scancel <job ID>
+
+That's it.  Now you can submit jobs to the cluster and let it work, leaving your desktop/laptop for other purposes.
+
+
+
