@@ -10,10 +10,10 @@ It is probably worth immediately making sure you are on the scratch disk, and no
 
 start an interactive session
 
->srun -N 1  -n 1 -c 1  -t 00:10:00 --pty /bin/bash
+>srun -p reservation --reservation=phys7321 -N 1  -n 1 -c 1  -t 00:10:00 --pty /bin/bash
 
 This example asks for 1 node, with 1 thread and 1 CPU per thread, for 10 minutes.
-If you go past 10 minutes, you will be kicked off
+If you go past 10 minutes, you will be kicked off.  We also added a reservation, which was created for this class.
 
 If you find yourself waiting for a while, you can ask for the "express" partition.  This is a separate "line", or "queue", for very short requests
 
