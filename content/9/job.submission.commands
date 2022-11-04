@@ -96,6 +96,8 @@ Example:
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 1
+#SBATCH -p reservation
+#SBATCH --reservation=phys7321
 #SBATCH --time=1:00:00
 #SBATCH -J MyFirstJob 
 #SBATCH --mem 10Gb
