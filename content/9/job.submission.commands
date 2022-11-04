@@ -43,7 +43,7 @@ Let's exit python (Ctrl+D)
 
 
 Now, let's run a script from the command line:
-python myfirstscript.py 0.1
+python firstpythonscript.py 0.1
 
 It may give you an import error due to a missing module
 So...
@@ -67,9 +67,9 @@ Now, we need to personalize our workspace. One way is to install module within o
 Ok, back to the task at hand.
 Let's repeat our calculation, but require a more precise answer.
 
-python myfirstscript.py 0.001
-python myfirstscript.py 0.0001
-python myfirstscript.py 0.00001
+python firstpythonscript.py 0.001
+python firstpythonscript.py 0.0001
+python firstpythonscript.py 0.00001
 
 At some point, you will see that you are waiting a very long time.  If you lose your connection, you lose your job! 
 
